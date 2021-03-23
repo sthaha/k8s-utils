@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+generate_cache() {
+  local cache=$1
+
+  strings `which oc` |
+    ag --nonumbers '^\s+(oc|kubectl) ' >> $cache
+  strings `which kubectl` |
+    ag --no-numbers '^\s+(kubectl) ' >> $cache
+
+  sed -i \
+    -e 's|^\s*||g' \
+    -e '/.\{300\}/d' \
+    $cache
+  # remove any line more than 200 chars
+  sort -u $cache -o $cache
+
+  [[ $# -eq 0  ]] &&  {
+    echo Generated $cache
+    return
+  }
+
+}
+
+main(){
+  local cache=/tmp/oc-strings
+
+  [[ $# -eq 0  ]] || [[ ! -r $cache ]] && {
+    generate_cache $cache
+    [[ $# -eq 0  ]] &&  {
+      echo Generated $cache
+      return
+    }
+  }
+
+  local str="$@"
+  local pattern="${str}"
+  ag --no-numbers "$pattern" $cache
+}
+
+main "$@"
