@@ -8,7 +8,7 @@ A tool to capture network packets from multiple pods
 git clone https://github.com/sthaha/k8s-utils
 
 ## assuming ~/bin is in your PATH
-ln -sf $PWD/k8s-utils/tools/oc-oc-tools-tcpdump ~/bin
+ln -sf $PWD/k8s-utils/tools/oc-tools-tcpdump ~/bin
 
 ## Verify by running
 oc tools tcpdump -h
@@ -31,8 +31,8 @@ oc tools tcpdump --no-nodes -n web -l app=nginx
 ## Todo
 
 - [ ] Allow flags to be passed to `tcpdump`
-- [ ] Port the logic to ksniff to allow multiple pods / deployment / daemonset
-      to be packet captured
+- [ ] Port the [logic to ksniff to allow multiple pods / deployment / daemonset
+      to be packet captured](https://github.com/eldadru/ksniff/issues/104)
 
 
 ## Credits
