@@ -10,7 +10,7 @@ generate_cache() {
 
   sed -i \
     -e 's|^\s*||g' \
-    -e '/.\{300\}/d' \
+    -e '/.\{200\}/d' \
     $cache
   # remove any line more than 200 chars
   sort -u $cache -o $cache
