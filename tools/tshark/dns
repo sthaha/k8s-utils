@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -e -u -o pipefail
+
+to_tshark_format() {
+  local opt=""
+  for x in "$@"; do
+    opt+=\"$x\",
+  done
+  echo ${opt%,}
+}
+
+main() {
+  local dns=(
+    Frame         %m
+    Time          %Aut
+    Delta         %Gt
+    Source        %s
+    Destination   %d
+    Protocol      %p
+    Port          %D
+    dns.id        %Cus:dns.id:6:R
+    dns.resp      %Cus:dns.response_to:0:R
+    dns.time      %Cus:dns.time:0:R
+    dns.answer    %Cus:dns.a:0:R
+    dns.rcode     %Cus:dns.flags.rcode:0:R
+    dns.type      %Cus:dns.qry.type:0:R
+    dns.qry       %Cus:dns.qry.name:0:R
+  )
+  # Info          %i
+
+  exec tshark -o gui.column.format:$(to_tshark_format "${dns[@]}") "$@"
+}
+
+main "$@"
+
+
