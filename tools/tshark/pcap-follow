@@ -1,0 +1,56 @@
+#!/bin/env bash
+
+
+to_tshark_format() {
+  local opt=""
+  for x in "$@"; do
+    opt+=\"$x\",
+  done
+  echo ${opt%,}
+}
+
+ts() {
+  local dns=(
+    Frame         %m
+    Time          %Aut
+    Delta         %Gt
+    Source        %s
+    Destination   %d
+    Protocol      %p
+    dns.id        %Cus:dns.id:0:R
+    Port          %D
+    dns.resp      %Cus:dns.response_to:0:R
+    dns.time      %Cus:dns.time:0:R
+    dns.answer    %Cus:dns.a:0:R
+    dns.rcode     %Cus:dns.flags.rcode:0:R
+    dns.type      %Cus:dns.qry.type:0:R
+    dns.qry       %Cus:dns.qry.name:0:R
+  )
+  # Info          %i
+  # dns.type      %Cus:dns.qry.type:0:R
+  # dns.retrans   %Cus:dns.restransmission:0:R
+  # dns.rets      %Cus:dns.restransmit_request_in:0:R
+  # dns.qry       %Cus:dns.qry.name:0:R
+
+  tshark -o gui.column.format:$(to_tshark_format "${dns[@]}") "$@"
+
+  return $?
+}
+
+main() {
+  local dns_id=$1; shift
+  local qry=$1; shift
+  local pcap=$1; shift
+
+  local out="$HOME/tmp/dns-$dns_id-$pcap.log"
+  touch $out || exit 1
+
+  for x in *.pcap; do
+    echo "### $x ###"
+    ts -r $x -Y "dns.id == $dns_id and dns.qry.name ~ \"$qry\""
+  done | tee "$out"
+
+  echo "$out"
+}
+
+main "$@"
