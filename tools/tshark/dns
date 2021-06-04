@@ -18,7 +18,7 @@ main() {
     Destination   %d
     Protocol      %p
     Port          %D
-    dns.id        %Cus:dns.id:6:R
+    dns.id        %Cus:dns.id:0:R
     dns.resp      %Cus:dns.response_to:0:R
     dns.time      %Cus:dns.time:0:R
     dns.answer    %Cus:dns.a:0:R
